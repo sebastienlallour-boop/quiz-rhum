@@ -241,8 +241,8 @@
     <input type="text" id="pseudo-input" placeholder="Votre Pseudo (requis)" style="padding: 10px; width: 80%; margin-top: 15px; border: 1px solid #ccc; border-radius: 5px;">
     
     <button class="action-btn" id="submit-result-btn" onclick="sendResult()">
-        Soumettre mon résultat & M'envoyer l'e-mail
-    </button>
+    Enregistrer mon résultat
+</button>
     
     <button class="action-btn" onclick="location.reload()">Recommencer</button>
 </div>
@@ -437,31 +437,41 @@
         }
     }
 
+    // VOTRE URL DE DEPLOIEMENT APPS SCRIPT (Étape 3)
+    // REMPLACEZ VOTRE_URL_DE_DEPLOIEMENT_ICI par l'URL obtenue après déploiement du script !
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbz66hZNRhinBJ8uFssR-QuZCS3eosIse39TPuBYH66ecXX4RiPucn4jV8ql7TT_qz-ffA/exec"; 
+    
+    const MAX_SCORE = 30; // Score maximum possible (somme des points de toutes les questions)
+
     function showResults() {
         quizArea.style.display = "none";
         resultsArea.style.display = "block";
         
         const finalScoreVal = document.getElementById("final-score-val");
-        finalScoreVal.textContent = score;
+        const finalPercentage = Math.round((score / MAX_SCORE) * 100);
+        
+        // Affichage du score en pourcentage (NOUVEAU)
+        finalScoreVal.textContent = finalPercentage + "%";
+        
+        // Mise à jour de l'affichage du score maximal (pourcentage)
+        document.querySelector('.final-score').innerHTML = `<span id="final-score-val">${finalPercentage}%</span>`;
+
 
         const msg = document.getElementById("final-message");
-        if (score === 30) {
+        if (finalPercentage === 100) {
             msg.textContent = "Incroyable ! Un véritable Maître de Chai ! 🥃";
-        } else if (score >= 20) {
+        } else if (finalPercentage >= 75) { // 75% = 22.5 points
             msg.textContent = "Excellent travail ! Le rhum n'a presque plus de secrets pour vous.";
-        } else if (score >= 10) {
+        } else if (finalPercentage >= 35) { // 35% = 10.5 points
             msg.textContent = "Pas mal ! Vous avez de bonnes bases à consolider.";
         } else {
             msg.textContent = "C'est un début. Une petite révision s'impose !";
         }
     }
 
-    // VOTRE URL DE DEPLOIEMENT APPS SCRIPT (Étape 3)
-    // REMPLACEZ VOTRE_URL_DE_DEPLOIEMENT_ICI par l'URL obtenue après déploiement du script !
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbz66hZNRhinBJ8uFssR-QuZCS3eosIse39TPuBYH66ecXX4RiPucn4jV8ql7TT_qz-ffA/exec"; 
-
     /**
-     * Envoie le résultat au Google Sheet et ouvre l'e-mail.
+     * Envoie le résultat (Pseudo et Score sur 30) au Google Sheet.
+     * La fonction mailto: a été supprimée.
      */
     function sendResult() {
         const pseudo = document.getElementById('pseudo-input').value;
@@ -471,44 +481,35 @@
             return;
         }
 
-        // --- 1. Envoi au Google Sheet via Apps Script ---
+        // --- Envoi au Google Sheet via Apps Script (inchangé) ---
         fetch(GAS_URL, {
             method: 'POST',
-            mode: 'no-cors', // Requis pour contourner les problèmes CORS de GAS
+            mode: 'no-cors', 
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 pseudo: pseudo,
-                score: score
+                score: score // On continue d'envoyer le score sur 30 pour la base de données
             })
         })
         .then(response => {
-            // Le mode 'no-cors' rend la réponse opaque, mais l'envoi a généralement réussi.
             console.log("Données envoyées à Google Sheet.");
             document.getElementById('submit-result-btn').disabled = true;
-            document.getElementById('submit-result-btn').textContent = "Résultat Soumis !";
+            document.getElementById('submit-result-btn').textContent = "Résultat Enregistré !";
         })
         .catch(error => {
-            console.error('Erreur lors de l\'envoi des données:', error);
+            console.error('Erreur lors de l\'enregistrement des données:', error);
             alert("Erreur lors de l'enregistrement, veuillez réessayer.");
         });
 
-        // --- 2. Envoi de l'e-mail (mailto:) ---
-        const email = "sebastienlallour@gmail.com";
-        const subject = encodeURIComponent("Mon résultat au Quiz Rhum");
-        const body = encodeURIComponent(`Voici mon résultat : ${score}/30. Mon pseudo est : ${pseudo}.`);
-        
-        // Ouvre la messagerie par défaut après un court délai
-        setTimeout(() => {
-            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-        }, 500); 
+        // La ligne window.location.href = mailto: a été retirée.
     }
-
     // L'exécution du script au chargement de la page n'appelle plus loadQuestion(), 
     // l'utilisateur doit cliquer sur "Commencer le Quiz".
 </script>
 
 </body>
 </html>
+
 
