@@ -232,18 +232,19 @@
         <button class="action-btn" id="next-btn" style="display:none" onclick="nextQuestion()">Question Suivante</button>
     </div>
 
-    <div class="results-card" id="results-area" style="display:none;">
-        <h2>Quiz Terminé !</h2>
-        <p>Votre score final est de :</p>
-        <div class="final-score"><span id="final-score-val">0</span> / 30</div>
-        <p id="final-message"></p>
-        
-        <button class="action-btn" id="email-result-btn" onclick="sendEmail()">
-            Je communique mon résultat
-        </button>
-        
-        <button class="action-btn" onclick="location.reload()">Recommencer</button>
-    </div>
+   <div class="results-card" id="results-area" style="display:none;">
+    <h2>Quiz Terminé !</h2>
+    <p>Votre score final est de :</p>
+    <div class="final-score"><span id="final-score-val">0</span> / 30</div>
+    <p id="final-message"></p>
+    
+    <input type="text" id="pseudo-input" placeholder="Votre Pseudo (requis)" style="padding: 10px; width: 80%; margin-top: 15px; border: 1px solid #ccc; border-radius: 5px;">
+    
+    <button class="action-btn" id="submit-result-btn" onclick="sendResult()">
+        Soumettre mon résultat & M'envoyer l'e-mail
+    </button>
+    
+    <button class="action-btn" onclick="location.reload()">Recommencer</button>
 </div>
 
 <script>
@@ -455,17 +456,53 @@
         }
     }
 
+    // VOTRE URL DE DEPLOIEMENT APPS SCRIPT (Étape 3)
+    // REMPLACEZ VOTRE_URL_DE_DEPLOIEMENT_ICI par l'URL obtenue après déploiement du script !
+    const GAS_URL = "VOTRE_URL_DE_DEPLOIEMENT_ICI"; 
+
     /**
-     * Fonction pour envoyer l'email (mailto:) - Intégration de sebastienlallour@gmail.com
+     * Envoie le résultat au Google Sheet et ouvre l'e-mail.
      */
-    function sendEmail() {
-        const email = "sebastienlallour@gmail.com";
-        // Encodage des caractères spéciaux pour l'URL
-        const subject = encodeURIComponent("Mon résultat au Quiz Rhum");
-        const body = encodeURIComponent(`Voici mon résultat : ${score}/30`);
+    function sendResult() {
+        const pseudo = document.getElementById('pseudo-input').value;
         
-        // Crée le lien mailto: et ouvre la messagerie par défaut
-        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+        if (!pseudo) {
+            alert("Veuillez entrer un pseudo pour enregistrer le résultat.");
+            return;
+        }
+
+        // --- 1. Envoi au Google Sheet via Apps Script ---
+        fetch(GAS_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Requis pour contourner les problèmes CORS de GAS
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                pseudo: pseudo,
+                score: score
+            })
+        })
+        .then(response => {
+            // Le mode 'no-cors' rend la réponse opaque, mais l'envoi a généralement réussi.
+            console.log("Données envoyées à Google Sheet.");
+            document.getElementById('submit-result-btn').disabled = true;
+            document.getElementById('submit-result-btn').textContent = "Résultat Soumis !";
+        })
+        .catch(error => {
+            console.error('Erreur lors de l\'envoi des données:', error);
+            alert("Erreur lors de l'enregistrement, veuillez réessayer.");
+        });
+
+        // --- 2. Envoi de l'e-mail (mailto:) ---
+        const email = "sebastienlallour@gmail.com";
+        const subject = encodeURIComponent("Mon résultat au Quiz Rhum");
+        const body = encodeURIComponent(`Voici mon résultat : ${score}/30. Mon pseudo est : ${pseudo}.`);
+        
+        // Ouvre la messagerie par défaut après un court délai
+        setTimeout(() => {
+            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+        }, 500); 
     }
 
     // L'exécution du script au chargement de la page n'appelle plus loadQuestion(), 
