@@ -56,15 +56,17 @@
         .welcome-illustration {
             width: 100%;
             height: 200px;
-            background-color: var(--barrel-brown); /* Fût de rhum */
+            background-color: var(--barrel-brown); 
             border-radius: 8px;
             margin: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 4em;
-            color: white;
+            overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .welcome-illustration img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         .welcome-description {
@@ -97,9 +99,8 @@
             letter-spacing: 1px;
         }
 
-        /* Visuel d'accentuation par question (1. Visuels) */
         .question-text::before {
-            content: "🥃 "; /* Un petit visuel pour l'accentuation */
+            content: "🥃 ";
             font-size: 1.2em;
             margin-right: 5px;
             color: var(--primary);
@@ -171,17 +172,6 @@
 
         .action-btn:hover { background-color: #a04000; }
         
-        /* 3. Bouton spécifique pour l'email */
-        #email-result-btn {
-            background-color: var(--correct);
-            margin-bottom: 10px;
-        }
-        
-        #email-result-btn:hover {
-            background-color: #1a7c41;
-        }
-
-
         .results-card {
             text-align: center;
         }
@@ -198,19 +188,23 @@
 <div class="quiz-container">
     
     <div id="welcome-area">
-    <h1 class="welcome-title">Quiz Rhum</h1>
-    <div class="welcome-illustration">
-        <!-- Placeholder Image: Replace with actual image or SVG if desired -->
-        <img src="https://placehold.co/600x200/8b4513/ffffff?text=Image+Distillerie" alt="Champ de canne à sucre et distillerie artisanale" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" onerror="this.onerror=null;this.src='https://placehold.co/600x200/8b4513/ffffff?text=Image+Distillerie';">
-    </div>
-    <p class="welcome-description">
-        Avec Les Editions Spiritueuses, testez vos connaissances sur le rhum ! : Plongez dans son univers fascinant et découvrez si vous êtes un véritable connaisseur de ce spiritueux légendaire !
+        <h1 class="welcome-title">Quiz Rhum</h1>
+        
+        <div class="welcome-illustration">
+            <!-- Image de substitution publique pour garantir l'affichage -->
+            <img src="https://placehold.co/600x200/8b4513/ffffff?text=Distillerie+et+Canne+%C3%A0+Sucre" 
+                 alt="Champ de canne à sucre et distillerie artisanale" 
+                 onerror="this.style.display='none'; this.parentNode.style.backgroundImage='url(https://placehold.co/600x200/8b4513/ffffff?text=Image+Non+Disponible)'">
+        </div>
+        
+        <p class="welcome-description">
+            Avec Les Editions Spiritueuses, testez vos connaissances sur le rhum ! : Plongez dans son univers fascinant et découvrez si vous êtes un véritable connaisseur de ce spiritueux légendaire !
+        </p>
+        <p style="font-weight: bold; color: #CC7722; border: 1px dashed #CC7722; padding: 10px; margin-top: 20px;">
+        ⚠️ RÈGLE DE SCORING : Le score final est pondéré par le temps de réponse. Le temps cible est de **2 minutes (120 secondes)**. Si vous dépassez 2 minutes, votre Index de Performance sera légèrement pénalisé.
     </p>
-    <p style="font-weight: bold; color: #CC7722; border: 1px dashed #CC7722; padding: 10px; margin-top: 20px;">
-    ⚠️ RÈGLE DE SCORING : Le score final est pondéré par le temps de réponse. Le temps cible est de **2 minutes (120 secondes)**. Si vous dépassez 2 minutes, votre Index de Performance sera légèrement pénalisé.
-</p>
-    <button class="action-btn" onclick="startQuiz()">Commencer le Quiz</button>
-</div>
+        <button class="action-btn" onclick="startQuiz()">Commencer le Quiz</button>
+    </div>
 
     <div id="quiz-area" style="display:none;">
         <div class="header">
@@ -259,13 +253,13 @@
 
 
 <script>
-    // VOTRE URL DE DEPLOIEMENT APPS SCRIPT (Étape 3)
-    // REMPLACEZ CECI par l'URL que vous obtenez APRÈS AVOIR FAIT UN NOUVEAU DÉPLOIEMENT du Code.gs
+    // VOTRE URL DE DEPLOIEMENT GOOGLE APPS SCRIPT
+    // REMPLACER cette chaîne par votre propre URL de déploiement Google Apps Script !
     const GAS_URL = "https://script.google.com/macros/s/AKfycbyvF0ZLV0GEm8RJkzZe_IOTUjitUd86IDbKSuV9f3qkBRWBxxlOT5TSaX6vROIQkcsS_w/exec";
 
     let resultSent = false; 
 
-    // Données du Quiz (Identiques)
+    // Données du Quiz
     const quizData = [
         {
             q: "Quel élément différencie le plus clairement un rhum agricole d’un rhum traditionnel ?",
@@ -463,13 +457,13 @@
 
 
     /**
-     * Affiche les résultats, calcule le temps et l'Index de Performance (MODIFIÉ)
+     * Affiche les résultats, calcule le temps et l'Index de Performance
      */
     function showResults() {
         quizArea.style.display = "none";
         resultsArea.style.display = "block";
         
-        // NOUVEAU : On masque l'affichage des résultats finaux pour l'envoi automatique du pseudo
+        // On masque l'affichage des résultats finaux en attendant que le pseudo soit renseigné
         document.getElementById("final-results-display").style.display = "none";
         
         // --- 1. Calcul du temps écoulé ---
@@ -488,7 +482,7 @@
         if (timeTakenSeconds > TARGET_TIME_SECONDS) {
             // Malus : 0.1% de malus par seconde au-delà du temps cible
             timeFactor = 1 - ((timeTakenSeconds - TARGET_TIME_SECONDS) * 0.001);
-            timeFactor = Math.max(0.5, timeFactor);
+            timeFactor = Math.max(0.5, timeFactor); // Limite du malus à 50%
         }
 
         // On stocke le résultat dans la variable globale pour l'envoi
@@ -496,7 +490,7 @@
         performanceIndex = Math.max(0, Math.min(100, performanceIndex));
 
 
-        // --- 3. Affichage (Mise à jour des valeurs masquées) ---
+        // --- 3. Mise à jour des valeurs de l'écran de résultats ---
         document.getElementById("final-score-val").textContent = performanceIndex + "%"; 
         document.getElementById("time-taken-display").textContent = `Durée totale : ${timeDisplay}`;
 
@@ -514,72 +508,77 @@
     }
     
     // -------------------------------------------------------------------
-    // 💥 NOUVEAU/CORRIGÉ : LA FONCTION QUI ENVOIE LES DONNÉES EST AJOUTÉE ICI
+    // FONCTION POUR ENVOYER LES RÉSULTATS (Avec Exponential Backoff)
     // -------------------------------------------------------------------
     async function sendResult(pseudo) {
-        // Le flag permet de s'assurer qu'on n'envoie qu'une seule fois
         if (resultSent) return; 
 
         document.getElementById('send-status').textContent = "Envoi des résultats en cours...";
 
-        // Données à envoyer : les variables globales et le pseudo reçu en argument.
         const dataToSend = {
             pseudo: pseudo,
-            score: score,                  // Score Brut (global)
-            time: timeTakenSeconds,        // Temps (global)
-            performanceIndex: performanceIndex // Index Performance (global)
+            score: score,                  
+            time: timeTakenSeconds,        
+            performanceIndex: performanceIndex 
         };
+        
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        const maxRetries = 3;
+        let attempt = 0;
+        let success = false;
 
-        try {
-            const response = await fetch(GAS_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                cache: 'no-cache',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(dataToSend)
-            });
+        while (attempt < maxRetries && !success) {
+            try {
+                // Tentative d'envoi à Google Apps Script
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Nécessaire pour les appels cross-origin simples
+                    cache: 'no-cache',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dataToSend)
+                });
 
-            // On considère l'envoi réussi même si 'no-cors' empêche de lire le statut HTTP
-            resultSent = true;
-            document.getElementById('send-status').textContent = "✅ Résultat enregistré !";
+                // Si le fetch réussit sans erreur réseau (même si la réponse est opaque), on considère que l'envoi a été tenté.
+                success = true;
+                resultSent = true;
+                document.getElementById('send-status').textContent = "✅ Résultat enregistré !";
 
-        } catch (error) {
-            console.error("Erreur lors de l'envoi des données à Google Sheets:", error);
-            document.getElementById('send-status').textContent = "❌ Échec de l'enregistrement. (Erreur Console)";
-            resultSent = false;
+            } catch (error) {
+                attempt++;
+                if (attempt < maxRetries) {
+                    const waitTime = Math.pow(2, attempt) * 1000; 
+                    await delay(waitTime);
+                } else {
+                    console.error("Erreur lors de l'envoi des données à Google Sheets (après plusieurs tentatives):", error);
+                    document.getElementById('send-status').textContent = "❌ Échec de l'enregistrement. Vérifiez l'URL et les logs du script.";
+                    resultSent = false;
+                }
+            }
         }
     }
 
     // -------------------------------------------------------------------
-    // CORRECTION : Le pseudo est passé à la nouvelle fonction sendResult
+    // GESTION DE LA SAISIE DU PSEUDO (Déclencheur d'envoi)
     // -------------------------------------------------------------------
 
     function handlePseudoInput(pseudoValue) {
         const finalResultsDisplay = document.getElementById("final-results-display");
         const pseudoTrimmed = pseudoValue.trim();
         
-        // Condition 1 : Le pseudo est vide.
+        // 1. Si le pseudo est vide, on masque les résultats finaux.
         if (pseudoTrimmed.length === 0) {
             finalResultsDisplay.style.display = "none";
-            // Si l'utilisateur efface le pseudo, on peut réinitialiser le statut
-            if (resultSent) {
-                document.getElementById('send-status').textContent = "";
-            }
             return;
         }
         
-        // Condition 2 : Le pseudo est renseigné et n'a jamais été envoyé
+        // 2. Le pseudo est renseigné, on affiche les résultats.
+        finalResultsDisplay.style.display = "block";
+
+        // 3. Si le résultat n'a pas encore été envoyé, on l'envoie.
         if (!resultSent) {
-            // Le pseudo est renseigné, on affiche les résultats ET ON ENVOIE.
-            finalResultsDisplay.style.display = "block";
-            sendResult(pseudoTrimmed); // 💥 APPEL CORRIGÉ : ON PASSE LE PSEUDO
-        }
-        
-        // Si le résultat a été envoyé, on affiche quand même les scores
-        if (resultSent) {
-            finalResultsDisplay.style.display = "block";
+            sendResult(pseudoTrimmed); 
         }
     }
 </script>
