@@ -1,372 +1,475 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Rhum - Expert</title>
-<style>
-:root {
---primary: #d35400; /* Couleur Rhum Ambré */
---secondary: #fdf2e9;
---correct: #27ae60;
---wrong: #c0392b;
---dark: #2c3e50;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Rhum - Connaisseur</title>
+    <style>
+        /* Couleurs et Thème Rhum */
+        :root {
+            --primary: #d35400; /* Rhum Ambré */
+            --secondary: #fdf2e9; /* Fond Clair */
+            --dark: #2c3e50;
+            --correct: #27ae60;
+            --wrong: #c0392b;
+            --barrel-brown: #8b4513;
+        }
 
-body {
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-background-color: #f4f6f7;
-display: flex;
-justify-content: center;
-align-items: center;
-min-height: 100vh;
-margin: 0;
-color: var(--dark);
-}
+        /* 1. Visuel Global */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--dark);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f6f7;
+            /* Si vous voulez une image de fond globale : */
+            /* background-image: url('URL_DE_VOTRE_IMAGE_DE_FOND'); */
+            /* background-size: cover; */
+        }
 
-.quiz-container {
-background: white;
-width: 100%;
-max-width: 600px;
-border-radius: 12px;
-box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-overflow: hidden;
-padding: 20px;
-}
+        .quiz-container {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            overflow: hidden;
+            padding: 30px;
+            transition: all 0.3s ease-in-out;
+        }
 
-.header {
-text-align: center;
-margin-bottom: 20px;
-border-bottom: 2px solid var(--secondary);
-padding-bottom: 10px;
-}
+        /* 2. Styles de la Page d'Accueil */
+        #welcome-area {
+            text-align: center;
+        }
 
-.header h1 { margin: 0; color: var(--primary); }
-.score-live { font-weight: bold; color: #7f8c8d; margin-top: 5px; }
+        .welcome-title {
+            color: var(--primary);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            border-bottom: 3px solid var(--primary);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
 
-.question-card { margin-bottom: 20px; }
+        /* Placeholder pour l'illustration de la page d'accueil */
+        .welcome-illustration {
+            width: 100%;
+            height: 200px;
+            background-color: var(--barrel-brown); /* Fût de rhum */
+            border-radius: 8px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4em;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        /* NOTE: Pour l'illustration, remplacez "🌴" par votre image, ou utilisez une icône ou une couleur de fond. */
 
-.question-meta {
-display: flex;
-justify-content: space-between;
-font-size: 0.9em;
-color: #7f8c8d;
-margin-bottom: 10px;
-text-transform: uppercase;
-font-weight: bold;
-letter-spacing: 1px;
-}
+        .welcome-description {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
 
-.question-text {
-font-size: 1.2em;
-margin-bottom: 20px;
-line-height: 1.5;
-}
+        /* Styles du Quiz */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+        }
 
-.options-grid {
-display: flex;
-flex-direction: column;
-gap: 10px;
-}
+        .header h1 { margin: 0; color: var(--dark); font-size: 1.5em;}
+        .score-live { font-weight: bold; color: #7f8c8d; margin-top: 5px; }
 
-.option-btn {
-background: white;
-border: 2px solid #bdc3c7;
-padding: 15px;
-border-radius: 8px;
-cursor: pointer;
-font-size: 1em;
-text-align: left;
-transition: all 0.2s;
-}
+        .question-card { margin-bottom: 20px; }
+        
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
 
-.option-btn:hover:not(:disabled) {
-border-color: var(--primary);
-background-color: var(--secondary);
-}
+        /* Visuel d'accentuation par question (1. Visuels) */
+        .question-text::before {
+            content: "🥃 "; /* Un petit visuel pour l'accentuation */
+            font-size: 1.2em;
+            margin-right: 5px;
+            color: var(--primary);
+        }
+        
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            padding-left: 5px;
+        }
 
-.option-btn.correct {
-background-color: #d4efdf;
-border-color: var(--correct);
-color: var(--correct);
-}
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-.option-btn.wrong {
-background-color: #fadbd8;
-border-color: var(--wrong);
-color: var(--wrong);
-}
+        .option-btn {
+            background: white;
+            border: 2px solid #bdc3c7;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            text-align: left;
+            transition: all 0.2s;
+        }
 
-.feedback {
-margin-top: 20px;
-padding: 15px;
-border-radius: 8px;
-background-color: #ecf0f1;
-display: none;
-}
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: var(--secondary);
+        }
 
-.next-btn {
-display: block;
-width: 100%;
-padding: 15px;
-background-color: var(--primary);
-color: white;
-border: none;
-border-radius: 8px;
-font-size: 1.1em;
-cursor: pointer;
-margin-top: 20px;
-display: none;
-}
+        .option-btn.correct {
+            background-color: #d4efdf;
+            border-color: var(--correct);
+            color: var(--correct);
+        }
 
-.next-btn:hover { background-color: #a04000; }
+        .option-btn.wrong {
+            background-color: #fadbd8;
+            border-color: var(--wrong);
+            color: var(--wrong);
+        }
 
-.results-card {
-text-align: center;
-display: none;
-}
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #ecf0f1;
+            display: none;
+        }
 
-.final-score {
-font-size: 3em;
-font-weight: bold;
-color: var(--primary);
-}
-</style>
+        /* Style pour les boutons généraux */
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+
+        .action-btn:hover { background-color: #a04000; }
+        
+        /* 3. Bouton spécifique pour l'email */
+        #email-result-btn {
+            background-color: var(--correct);
+            margin-bottom: 10px;
+        }
+        
+        #email-result-btn:hover {
+            background-color: #1a7c41;
+        }
+
+
+        .results-card {
+            text-align: center;
+        }
+        
+        .final-score {
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--primary);
+        }
+    </style>
 </head>
 <body>
 
 <div class="quiz-container">
-<div class="header">
-<h1>Connaisseur du Rhum</h1>
-<div class="score-live" id="progress-text">Question 1 / 15</div>
-</div>
+    
+    <div id="welcome-area">
+        <h1 class="welcome-title">Quiz Rhum</h1>
+        <div class="welcome-illustration">
+            🌴
+            </div>
+        <p class="welcome-description">
+            **Testez vos connaissances sur le roi des spiritueux :** Plongez dans l'univers fascinant du rhum et découvrez si vous êtes un véritable connaisseur de ce spiritueux légendaire.
+        </p>
+        <button class="action-btn" onclick="startQuiz()">Commencer le Quiz</button>
+    </div>
 
-<div id="quiz-area">
-<div class="question-card">
-<div class="question-meta">
-<span id="q-difficulty">Difficulté</span>
-<span id="q-points">Points</span>
-</div>
-<div class="question-text" id="question-text">Chargement...</div>
-<div class="options-grid" id="options-container">
-</div>
-</div>
+    <div id="quiz-area" style="display:none;">
+        <div class="header">
+            <h1>Connaisseur du Rhum</h1>
+            <div class="score-live" id="progress-text"></div>
+        </div>
 
-<div class="feedback" id="feedback-area"></div>
-<button class="next-btn" id="next-btn" onclick="nextQuestion()">Question Suivante</button>
-</div>
+        <div class="question-card">
+            <div class="question-meta">
+                <span id="q-difficulty">Difficulté</span>
+                <span id="q-points">Points</span>
+            </div>
+            <div class="question-text" id="question-text"></div>
+            <div class="options-grid" id="options-container">
+                </div>
+        </div>
 
-<div class="results-card" id="results-area">
-<h2>Quiz Terminé !</h2>
-<p>Votre score final est de :</p>
-<div class="final-score"><span id="final-score-val">0</span> / 30</div>
-<p id="final-message"></p>
-<button class="next-btn" style="display:block" onclick="location.reload()">Recommencer</button>
-</div>
+        <div class="feedback" id="feedback-area"></div>
+        <button class="action-btn" id="next-btn" style="display:none" onclick="nextQuestion()">Question Suivante</button>
+    </div>
+
+    <div class="results-card" id="results-area" style="display:none;">
+        <h2>Quiz Terminé !</h2>
+        <p>Votre score final est de :</p>
+        <div class="final-score"><span id="final-score-val">0</span> / 30</div>
+        <p id="final-message"></p>
+        
+        <button class="action-btn" id="email-result-btn" onclick="sendEmail()">
+            Je communique mon résultat
+        </button>
+        
+        <button class="action-btn" onclick="location.reload()">Recommencer</button>
+    </div>
 </div>
 
 <script>
-// Données basées sur votre document
-const quizData = [
-{
-q: "Quel élément différencie le plus clairement un rhum agricole d’un rhum traditionnel ?",
-options: ["Le type de fûts utilisés", "Le climat de la distillerie", "La matière première : vesou ou mélasse"],
-correct: 2,
-points: 1,
-explanation: "Le rhum agricole est fait à partir de pur jus de canne (vesou), le traditionnel à partir de mélasse."
-},
-{
-q: "Le vesou est :",
-options: ["Le jus de canne à sucre frais pressé", "Un sirop de canne concentré", "Un distillat de mélasse"],
-correct: 0,
-points: 2,
-explanation: "Le vesou est le terme technique désignant le jus extrait directement du broyage de la canne."
-},
-{
-q: "La mélasse donne souvent des rhums :",
-options: ["Neutres et peu aromatiques", "Plus ronds, parfois gourmands", "Légers et floraux sans exception"],
-correct: 1,
-points: 3,
-explanation: "La mélasse, issue du sucre cuit, tend à donner des notes de caramel et une certaine rondeur."
-},
-{
-q: "Quelle est l’une des conséquences d’une fermentation longue ?",
-options: ["Favorise les arômes complexes (fruités/fermentaires)", "Donne un rhum très léger", "Réduit systématiquement l'alcool"],
-correct: 0,
-points: 1,
-explanation: "Le temps permet aux levures de créer des esters complexes et aromatiques."
-},
-{
-q: "Une fermentation courte donne généralement :",
-options: ["Des arômes lourds et épais", "Des rhums exclusivement vieillis", "Des rhums plus légers et fruités"],
-correct: 2,
-points: 2,
-explanation: "Une fermentation rapide limite les congénères lourds pour un résultat plus léger."
-},
-{
-q: "Une fermentation longue permet surtout :",
-options: ["De réduire le taux d’alcool", "De développer des arômes complexes, riches en esters", "D’aromatiser avec des fruits"],
-correct: 1,
-points: 3,
-explanation: "C'est le secret des rhums 'Grand Arôme' ou High Ester."
-},
-{
-q: "La distillation consiste principalement à :",
-options: ["Sucrer le rhum", "Séparer l’alcool de l’eau par chauffage", "Embouteiller le distillat"],
-correct: 1,
-points: 1,
-explanation: "C'est un procédé de séparation thermique basé sur les points d'ébullition."
-},
-{
-q: "Le pot still est souvent associé à :",
-options: ["Une distillation à froid", "Des rhums très neutres", "Un style aromatique riche et puissant"],
-correct: 2,
-points: 2,
-explanation: "L'alambic à repasse conserve plus d'éléments lourds et aromatiques que la colonne."
-},
-{
-q: "La distillation en colonne permet généralement :",
-options: ["Une production continue et optimisée", "Une production artisanale", "Un taux d'alcool faible"],
-correct: 0,
-points: 3,
-explanation: "C'est la méthode industrielle par excellence pour les grands volumes."
-},
-{
-q: "Quel climat accélère le vieillissement d'un rhum ?",
-options: ["Tropical chaud et humide", "Sec et froid", "Alpin"],
-correct: 0,
-points: 1,
-explanation: "La chaleur dilate le bois et accélère les réactions chimiques."
-},
-{
-q: "Un vieillissement en climat tropical a pour effet :",
-options: ["D’accélérer la maturation et les arômes boisés", "De neutraliser le bois", "De réduire l'alcool drastiquement"],
-correct: 0,
-points: 2,
-explanation: "La 'part des anges' est élevée, concentrant le rhum et extrayant le bois rapidement."
-},
-{
-q: "Un rhum fini en fût de Pedro Ximénez aura souvent :",
-options: ["Un profil sec et tannique", "Une texture saline", "Des notes liquoreuses, raisin sec et caramel"],
-correct: 2,
-points: 3,
-explanation: "Le fût de ce vin doux lègue ses arômes sucrés et fruités au rhum."
-},
-{
-q: "Quel est l’un des avantages de l’assemblage ?",
-options: ["Créer un produit équilibré et complexe", "Augmenter la production sans distiller", "Réduire le sucre"],
-correct: 0,
-points: 1,
-explanation: "L'assemblage permet d'harmoniser les profils et d'assurer la constance."
-},
-{
-q: "Un rhum 'mono-fût' (Single Cask) :",
-options: ["Est un assemblage de 3 cuvées", "Vient d’un unique fût", "Est un rhum brut sans distillation"],
-correct: 1,
-points: 2,
-explanation: "Comme son nom l'indique, il provient d'une seule barrique spécifique."
-},
-{
-q: "La méthode Solera permet :",
-options: ["De produire un monocépage", "De filtrer via la canne", "Intégrer en continu vieux et jeunes rhums"],
-correct: 2,
-points: 3,
-explanation: "C'est un système dynamique de mélange vertical pour homogénéiser les âges."
-}
-];
+    // Données du Quiz (Identiques à la version précédente)
+    const quizData = [
+        {
+            q: "Quel élément différencie le plus clairement un rhum agricole d’un rhum traditionnel ?",
+            options: ["Le type de fûts utilisés", "Le climat de la distillerie", "La matière première : vesou ou mélasse"],
+            correct: 2,
+            points: 1,
+            explanation: "Le rhum agricole est fait à partir de pur jus de canne (vesou), le traditionnel à partir de mélasse."
+        },
+        {
+            q: "Le vesou est :",
+            options: ["Le jus de canne à sucre frais pressé", "Un sirop de canne concentré", "Un distillat de mélasse"],
+            correct: 0,
+            points: 2,
+            explanation: "Le vesou est le terme technique désignant le jus extrait directement du broyage de la canne."
+        },
+        {
+            q: "La mélasse donne souvent des rhums :",
+            options: ["Neutres et peu aromatiques", "Plus ronds, parfois gourmands", "Légers et floraux sans exception"],
+            correct: 1,
+            points: 3,
+            explanation: "La mélasse, issue du sucre cuit, tend à donner des notes de caramel et une certaine rondeur."
+        },
+        {
+            q: "Quelle est l’une des conséquences d’une fermentation longue ?",
+            options: ["Favorise les arômes complexes (fruités/fermentaires)", "Donne un rhum très léger", "Réduit systématiquement l'alcool"],
+            correct: 0,
+            points: 1,
+            explanation: "Le temps permet aux levures de créer des esters complexes et aromatiques."
+        },
+        {
+            q: "Une fermentation courte donne généralement :",
+            options: ["Des arômes lourds et épais", "Des rhums exclusivement vieillis", "Des rhums plus légers et fruités"],
+            correct: 2,
+            points: 2,
+            explanation: "Une fermentation rapide limite les congénères lourds pour un résultat plus léger."
+        },
+        {
+            q: "Une fermentation longue permet surtout :",
+            options: ["De réduire le taux d’alcool", "De développer des arômes complexes, riches en esters", "D’aromatiser avec des fruits"],
+            correct: 1,
+            points: 3,
+            explanation: "C'est le secret des rhums 'Grand Arôme' ou High Ester."
+        },
+        {
+            q: "La distillation consiste principalement à :",
+            options: ["Sucrer le rhum", "Séparer l’alcool de l’eau par chauffage", "Embouteiller le distillat"],
+            correct: 1,
+            points: 1,
+            explanation: "C'est un procédé de séparation thermique basé sur les points d'ébullition."
+        },
+        {
+            q: "Le pot still est souvent associé à :",
+            options: ["Une distillation à froid", "Des rhums très neutres", "Un style aromatique riche et puissant"],
+            correct: 2,
+            points: 2,
+            explanation: "L'alambic à repasse conserve plus d'éléments lourds et aromatiques que la colonne."
+        },
+        {
+            q: "La distillation en colonne permet généralement :",
+            options: ["Une production continue et optimisée", "Une production artisanale", "Un taux d'alcool faible"],
+            correct: 0,
+            points: 3,
+            explanation: "C'est la méthode industrielle par excellence pour les grands volumes."
+        },
+        {
+            q: "Quel climat accélère le vieillissement d'un rhum ?",
+            options: ["Tropical chaud et humide", "Sec et froid", "Alpin"],
+            correct: 0,
+            points: 1,
+            explanation: "La chaleur dilate le bois et accélère les réactions chimiques."
+        },
+        {
+            q: "Un vieillissement en climat tropical a pour effet :",
+            options: ["D’accélérer la maturation et les arômes boisés", "De neutraliser le bois", "De réduire l'alcool drastiquement"],
+            correct: 0,
+            points: 2,
+            explanation: "La 'part des anges' est élevée, concentrant le rhum et extrayant le bois rapidement."
+        },
+        {
+            q: "Un rhum fini en fût de Pedro Ximénez aura souvent :",
+            options: ["Un profil sec et tannique", "Une texture saline", "Des notes liquoreuses, raisin sec et caramel"],
+            correct: 2,
+            points: 3,
+            explanation: "Le fût de ce vin doux lègue ses arômes sucrés et fruités au rhum."
+        },
+        {
+            q: "Quel est l’un des avantages de l’assemblage ?",
+            options: ["Créer un produit équilibré et complexe", "Augmenter la production sans distiller", "Réduire le sucre"],
+            correct: 0,
+            points: 1,
+            explanation: "L'assemblage permet d'harmoniser les profils et d'assurer la constance."
+        },
+        {
+            q: "Un rhum 'mono-fût' (Single Cask) :",
+            options: ["Est un assemblage de 3 cuvées", "Vient d’un unique fût", "Est un rhum brut sans distillation"],
+            correct: 1,
+            points: 2,
+            explanation: "Comme son nom l'indique, il provient d'une seule barrique spécifique."
+        },
+        {
+            q: "La méthode Solera permet :",
+            options: ["De produire un monocépage", "De filtrer via la canne", "Intégrer en continu vieux et jeunes rhums"],
+            correct: 2,
+            points: 3,
+            explanation: "C'est un système dynamique de mélange vertical pour homogénéiser les âges."
+        }
+    ];
 
-let currentQuestionIndex = 0;
-let score = 0;
-let totalPointsPossible = 30; // 30 points total based on the document logic
+    let currentQuestionIndex = 0;
+    let score = 0;
+    
+    // Éléments du DOM
+    const welcomeArea = document.getElementById("welcome-area");
+    const quizArea = document.getElementById("quiz-area");
+    const resultsArea = document.getElementById("results-area");
 
-const questionText = document.getElementById("question-text");
-const optionsContainer = document.getElementById("options-container");
-const progressText = document.getElementById("progress-text");
-const pointsDisplay = document.getElementById("q-points");
-const feedbackArea = document.getElementById("feedback-area");
-const nextBtn = document.getElementById("next-btn");
-const quizArea = document.getElementById("quiz-area");
-const resultsArea = document.getElementById("results-area");
+    const questionText = document.getElementById("question-text");
+    const optionsContainer = document.getElementById("options-container");
+    const progressText = document.getElementById("progress-text");
+    const pointsDisplay = document.getElementById("q-points");
+    const feedbackArea = document.getElementById("feedback-area");
+    const nextBtn = document.getElementById("next-btn");
 
-function loadQuestion() {
-const currentData = quizData[currentQuestionIndex];
+    /**
+     * Lance le quiz en cachant la page d'accueil.
+     */
+    function startQuiz() {
+        welcomeArea.style.display = "none";
+        quizArea.style.display = "block";
+        loadQuestion();
+    }
 
-questionText.textContent = currentData.q;
-pointsDisplay.textContent = currentData.points + (currentData.points > 1 ? " Points" : " Point");
-progressText.textContent = `Question ${currentQuestionIndex + 1} / ${quizData.length}`;
+    function loadQuestion() {
+        const currentData = quizData[currentQuestionIndex];
+        
+        questionText.textContent = currentData.q;
+        pointsDisplay.textContent = currentData.points + (currentData.points > 1 ? " Points" : " Point");
+        progressText.textContent = `Question ${currentQuestionIndex + 1} / ${quizData.length}`;
+        
+        optionsContainer.innerHTML = "";
+        feedbackArea.style.display = "none";
+        nextBtn.style.display = "none";
 
-optionsContainer.innerHTML = "";
-feedbackArea.style.display = "none";
-nextBtn.style.display = "none";
+        currentData.options.forEach((opt, index) => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.textContent = opt;
+            btn.onclick = () => checkAnswer(index, btn);
+            optionsContainer.appendChild(btn);
+        });
+    }
 
-currentData.options.forEach((opt, index) => {
-const btn = document.createElement("button");
-btn.className = "option-btn";
-btn.textContent = opt;
-btn.onclick = () => checkAnswer(index, btn);
-optionsContainer.appendChild(btn);
-});
-}
+    function checkAnswer(selectedIndex, btnElement) {
+        const currentData = quizData[currentQuestionIndex];
+        const buttons = optionsContainer.querySelectorAll(".option-btn");
+        
+        // Désactiver tous les boutons
+        buttons.forEach(btn => btn.disabled = true);
 
-function checkAnswer(selectedIndex, btnElement) {
-const currentData = quizData[currentQuestionIndex];
-const buttons = optionsContainer.querySelectorAll(".option-btn");
+        if (selectedIndex === currentData.correct) {
+            btnElement.classList.add("correct");
+            score += currentData.points;
+            feedbackArea.innerHTML = `<strong>Correct !</strong> <br>${currentData.explanation}`;
+            feedbackArea.style.borderLeft = "5px solid var(--correct)";
+        } else {
+            btnElement.classList.add("wrong");
+            buttons[currentData.correct].classList.add("correct");
+            feedbackArea.innerHTML = `<strong>Incorrect.</strong> La bonne réponse était : <em>${currentData.options[currentData.correct]}</em><br>${currentData.explanation}`;
+            feedbackArea.style.borderLeft = "5px solid var(--wrong)";
+        }
 
-// Désactiver tous les boutons
-buttons.forEach(btn => btn.disabled = true);
+        feedbackArea.style.display = "block";
+        nextBtn.style.display = "block";
+        
+        if (currentQuestionIndex === quizData.length - 1) {
+            nextBtn.textContent = "Voir les résultats";
+        }
+    }
 
-if (selectedIndex === currentData.correct) {
-btnElement.classList.add("correct");
-score += currentData.points;
-feedbackArea.innerHTML = `<strong>Correct !</strong> <br>${currentData.explanation}`;
-feedbackArea.style.borderLeft = "5px solid #27ae60";
-} else {
-btnElement.classList.add("wrong");
-buttons[currentData.correct].classList.add("correct");
-feedbackArea.innerHTML = `<strong>Incorrect.</strong> La bonne réponse était : <em>${currentData.options[currentData.correct]}</em><br>${currentData.explanation}`;
-feedbackArea.style.borderLeft = "5px solid #c0392b";
-}
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
 
-feedbackArea.style.display = "block";
-nextBtn.style.display = "block";
+    function showResults() {
+        quizArea.style.display = "none";
+        resultsArea.style.display = "block";
+        
+        const finalScoreVal = document.getElementById("final-score-val");
+        finalScoreVal.textContent = score;
 
-if (currentQuestionIndex === quizData.length - 1) {
-nextBtn.textContent = "Voir les résultats";
-}
-}
+        const msg = document.getElementById("final-message");
+        if (score === 30) {
+            msg.textContent = "Incroyable ! Un véritable Maître de Chai ! 🥃";
+        } else if (score >= 20) {
+            msg.textContent = "Excellent travail ! Le rhum n'a presque plus de secrets pour vous.";
+        } else if (score >= 10) {
+            msg.textContent = "Pas mal ! Vous avez de bonnes bases à consolider.";
+        } else {
+            msg.textContent = "C'est un début. Une petite révision s'impose !";
+        }
+    }
 
-function nextQuestion() {
-currentQuestionIndex++;
-if (currentQuestionIndex < quizData.length) {
-loadQuestion();
-} else {
-showResults();
-}
-}
+    /**
+     * Fonction pour envoyer l'email (mailto:) - Intégration de sebastienlallour@gmail.com
+     */
+    function sendEmail() {
+        const email = "sebastienlallour@gmail.com";
+        // Encodage des caractères spéciaux pour l'URL
+        const subject = encodeURIComponent("Mon résultat au Quiz Rhum");
+        const body = encodeURIComponent(`Voici mon résultat : ${score}/30`);
+        
+        // Crée le lien mailto: et ouvre la messagerie par défaut
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    }
 
-function showResults() {
-quizArea.style.display = "none";
-resultsArea.style.display = "block";
-progressText.style.display = "none";
-
-const finalScoreVal = document.getElementById("final-score-val");
-finalScoreVal.textContent = score;
-
-const msg = document.getElementById("final-message");
-if (score === 30) {
-msg.textContent = "Incroyable ! Un véritable Maître de Chai ! 🥃";
-} else if (score >= 20) {
-msg.textContent = "Excellent travail ! Le rhum n'a presque plus de secrets pour vous.";
-} else if (score >= 10) {
-msg.textContent = "Pas mal ! Vous avez de bonnes bases à consolider.";
-} else {
-msg.textContent = "C'est un début. Une petite révision s'impose !";
-}
-}
-
-// Démarrage
-loadQuestion();
-
+    // L'exécution du script au chargement de la page n'appelle plus loadQuestion(), 
+    // l'utilisateur doit cliquer sur "Commencer le Quiz".
 </script>
 
 </body>
