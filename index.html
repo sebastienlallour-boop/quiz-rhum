@@ -37,6 +37,7 @@
             overflow: hidden;
             padding: 30px;
             transition: all 0.3s ease-in-out;
+            box-sizing: border-box; /* Assure que le padding n'augmente pas la taille totale */
         }
 
         /* 2. Styles de la Page d'Accueil */
@@ -190,6 +191,32 @@
             color: var(--primary);
         }
         
+        /* ------------------------------------------------------------------- */
+        /* FIX MOBILE : Empêche le zoom sur le champ pseudo et ajuste les tailles */
+        /* ------------------------------------------------------------------- */
+        
+        #pseudo-input {
+            padding: 10px; 
+            width: 80%; 
+            margin-top: 15px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px;
+            font-size: 1em; /* Doit être au moins 16px (1em) pour éviter le zoom mobile */
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 640px) {
+            .quiz-container {
+                padding: 20px; /* Moins de padding sur mobile */
+            }
+            .welcome-title {
+                font-size: 2em; /* Réduction du titre pour l'espace */
+            }
+            .welcome-description {
+                font-size: 1em; /* Réduction du texte descriptif */
+            }
+        }
+        
         /* Style pour le bouton d'envoi des résultats */
         #send-results-btn {
             margin-top: 15px;
@@ -262,8 +289,8 @@
             Pour voir les résultats, renseignez votre pseudo :
         </p>
 
+        <!-- Champ de pseudo sans style en ligne, utilisant le CSS #pseudo-input -->
         <input type="text" id="pseudo-input" placeholder="Votre Pseudo (requis)" 
-            style="padding: 10px; width: 80%; margin-top: 15px; border: 1px solid #ccc; border-radius: 5px;"
             oninput="handlePseudoInput(this.value)"> 
         
         <!-- Bouton d'envoi des résultats -->
